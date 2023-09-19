@@ -1,4 +1,4 @@
-const {sayHello}= require('./sayHello');
+const {sayHello}= require('./folder/sayHello');
 // sayHello();
 //
 // console.log(__dirname);
@@ -24,21 +24,42 @@ const {sayHello}= require('./sayHello');
 const fs = require('node:fs')
 const path =  require('node:path');
 
-const filePath = path.join(__dirname, 'folder', "text.txt")
- fs.writeFile(filePath, 'Hello from Nadiia!',(error)=>{
-    if ( error) {
-        throw new Error(error.message)
-    }
-})
+const filePath = path.join(__dirname, 'folder2')
+//  fs.writeFile(filePath, 'Hello from Nadiia!',(error)=>{
+//     if ( error) {
+//         throw new Error(error.message)
+//     }
+// })
 
-fs.appendFile(filePath, "hello AGAIN\n", (err)=>{
-    if(err){
-        throw new Error(err.message)
-    }
-})
+// fs.appendFile(filePath, "hello AGAIN\n", (err)=>{
+//     if(err){
+//         throw new Error(err.message)
+//     }
+// })
+//
+// fs.appendFile(filePath, 'today is new day', (err)=>{
+//     if (err){
+//         throw new Error(err.message)
+//     }
+// })
 
-fs.appendFile(filePath, 'today is new day', (err)=>{
-    if (err){
-        throw new Error(err.message)
-    }
-})
+// fs.truncate(filePath,(err)=>{
+//     if(err) throw new Error(err.message)
+// })
+// fs.unlink(filePath,(err)=>{
+//     if(err) throw new Error(err.message)
+// })
+
+// fs.readFile(filePath, (err, data) => {
+//     if(err) throw new Error(err.message);
+//     console.log(data.toString())
+// })
+
+// fs.readdir(filePath, (err, files) => {
+//     // if(err) throw new Error(err.message);
+//     console.log(files)
+// })
+
+// fs.mkdir(filePath,err => {})
+fs.rmdir(filePath,err => {})
+
