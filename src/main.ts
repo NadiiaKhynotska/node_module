@@ -1,13 +1,12 @@
+import * as fsService from './fs.service'
+import express from 'express';
 
-const express = require('express')
-
-const fsService = require('./fs.service')
 const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-app.get('/users', async (req, res) => {
+app.get('/users', async (_req, res) => {
     const users = await fsService.reader()
     res.json(users)
 })
