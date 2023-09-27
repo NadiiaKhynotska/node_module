@@ -114,7 +114,10 @@ app.put("/users/:id", async (req, res) => {
 });
 
 const Port = 5001;
-mongoose.connect("mongodb://localhost:27017");
-app.listen(Port, () => {
+
+app.listen(Port, async () => {
+  await mongoose.connect(
+    "mongodb+srv://march-2023:march-2023@march-2023.axncvwf.mongodb.net/",
+  );
   console.log(`server has successfully started on port ${Port}`);
 });
