@@ -1,17 +1,30 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import * as mongoose from "mongoose";
 
 import { configs } from "./configs/config";
 import * as fsService from "./fs.service";
+import { User } from "./models";
+import { IUser } from "./types";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/users", async (_req, res) => {
-  const users = await fsService.reader();
-  res.json(users);
+app.get(
+  "/users",
+  async (_req: Request, res: Response): Promise<Response<IUser[]>> => {
+    const users = await User.find();
+    return res.json(users);
+  },
+);
+app.post("/users", async (req, res) => {
+  try {
+    const createdUser = await User.create({ ...req.body });
+    res.status(201).json(createdUser);
+  } catch (e) {
+    res.status(400).json(e.message);
+  }
 });
 
 app.get("/users/:id", async (req, res) => {
@@ -26,34 +39,6 @@ app.get("/users/:id", async (req, res) => {
     res.json(user);
   } catch (e) {
     res.status(404).json(e.message);
-  }
-});
-
-app.post("/users", async (req, res) => {
-  try {
-    const { name, age, gender, email } = req.body;
-    if (!name || name.length <= 2) {
-      throw new Error("incorrect name");
-    }
-    if (!age || age < 4) {
-      throw new Error("invalid age");
-    }
-    if (!gender && gender !== "Female" && gender !== "Male") {
-      throw new Error("invalid value of gender");
-    }
-    if (!email || !email.includes("@")) {
-      throw new Error("invalid email");
-    }
-
-    const users = await fsService.reader();
-
-    const lasId = users[users.length - 1].id;
-    const newUser = { id: lasId + 1, name, age, gender, email };
-    users.push(newUser);
-    await fsService.writer(users);
-    res.status(201).json(newUser);
-  } catch (e) {
-    res.status(400).json(e.message);
   }
 });
 
