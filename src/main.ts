@@ -1,6 +1,7 @@
 import express from "express";
 import * as mongoose from "mongoose";
 
+import { configs } from "./configs/config";
 import * as fsService from "./fs.service";
 
 const app = express();
@@ -116,8 +117,6 @@ app.put("/users/:id", async (req, res) => {
 const Port = 5001;
 
 app.listen(Port, async () => {
-  await mongoose.connect(
-    "mongodb+srv://march-2023:march-2023@march-2023.axncvwf.mongodb.net/",
-  );
+  await mongoose.connect(configs.DB_URI);
   console.log(`server has successfully started on port ${Port}`);
 });
