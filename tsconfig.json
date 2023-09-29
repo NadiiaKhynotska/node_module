@@ -16,7 +16,6 @@
     "esModuleInterop": true,
     "removeComments": true,
     "noImplicitAny": true,
-
     /* Enable error reporting for expressions and declarations with an implied 'any' type. */
     "noUnusedLocals": true,
     /* Enable error reporting when local variables aren't read. */
