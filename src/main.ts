@@ -32,11 +32,10 @@ app.post(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { value, error } = UserValidator.create.validate(req.body);
-      const createdUser = await User.create(value);
-
       if (error) {
         throw new ApiError(error.message, 400);
       }
+      const createdUser = await User.create(value);
       res.status(201).json(createdUser);
     } catch (e) {
       next(e);
