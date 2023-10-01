@@ -10,8 +10,8 @@ class UserMiddleware {
     next: NextFunction,
   ) {
     try {
-      const { id } = req.params;
-      const user = await userRepository.findById(id);
+      const { userId } = req.params;
+      const user = await userRepository.findById(userId);
       if (!user) {
         throw new ApiError("user nor found", 404);
       }

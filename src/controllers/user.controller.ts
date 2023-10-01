@@ -25,6 +25,47 @@ class UserController {
       next(e);
     }
   }
+
+  public async create(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const createdUser = await userService.create(req.body);
+      res.status(201).json(createdUser);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async deleteById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      await userService.deleteOne(req.params.userId);
+
+      res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async updateById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const updatedUser = await userService.update(req.params.userId, req.body);
+
+      res.status(201).json(updatedUser);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const userController = new UserController();
