@@ -1,7 +1,7 @@
 import { FilterQuery } from "mongoose";
 
 import { User } from "../models";
-import { IUser } from "../types";
+import { IUser, IUserCredentials } from "../types";
 
 class UserRepository {
   public async getAll(): Promise<IUser[]> {
@@ -12,11 +12,15 @@ class UserRepository {
     return await User.findById(id);
   }
 
-  public async getOneByParams(params: FilterQuery<IUser>): Promise<any> {
+  public async getOneByParams(params: FilterQuery<IUser>): Promise<IUser> {
     return await User.findOne(params);
   }
 
-  public async create(dto: IUser): Promise<any> {
+  public async create(dto: IUser): Promise<IUser> {
+    return await User.create(dto);
+  }
+
+  public async register(dto: IUserCredentials): Promise<IUser> {
     return await User.create(dto);
   }
 

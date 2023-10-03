@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 
 import { EProducer } from "../enums";
+import { ICar } from "../types";
 
 const carSchema = new Schema(
   {
@@ -24,4 +25,4 @@ const carSchema = new Schema(
   },
 );
 
-export const Car = model("car", carSchema);
+export const Car = model<ICar>("car", carSchema);

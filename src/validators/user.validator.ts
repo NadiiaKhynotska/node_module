@@ -7,18 +7,25 @@ export class UserValidator {
   static firstName = joi.string().min(4).max(40).trim();
   static age = joi.number().min(18).max(190);
   static gender = joi.valid(...Object.values(EGenders));
+  static email = joi.string().regex(regexConstant.EMAIL).trim();
+  static password = joi.string().regex(regexConstant.PASSWORD).trim();
 
   static create = joi.object({
     name: this.firstName.required(),
     age: this.age.required(),
     gender: this.gender.required(),
-    email: joi.string().regex(regexConstant.EMAIL).trim().required(),
-    password: joi.string().regex(regexConstant.PASSWORD).trim().required(),
+    email: this.email.required(),
+    password: this.password.required(),
   });
 
   static update = joi.object({
     name: this.firstName,
     age: this.age,
     gender: this.gender,
+  });
+
+  static register = joi.object({
+    email: this.email.required(),
+    password: this.password.required(),
   });
 }

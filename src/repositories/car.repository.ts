@@ -12,11 +12,11 @@ class CarRepository {
     return await Car.findById(id);
   }
 
-  public async getOneByParams(params: FilterQuery<ICar>): Promise<any> {
+  public async getOneByParams(params: FilterQuery<ICar>): Promise<ICar> {
     return await Car.findOne(params);
   }
 
-  public async create(dto: ICar): Promise<any> {
+  public async create(dto: ICar): Promise<ICar> {
     return await Car.create(dto);
   }
 
