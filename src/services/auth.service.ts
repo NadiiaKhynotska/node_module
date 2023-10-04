@@ -2,7 +2,7 @@ import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
 import { tokenRepository } from "../repositories/token.repository";
 import { IUserCredentials } from "../types";
-import { ITokensPair } from "../types/token.type";
+import { IToken, ITokenPayload, ITokensPair } from "../types/token.type";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
@@ -36,6 +36,26 @@ class AuthService {
       });
 
       await tokenRepository.create({ ...tokenPair, _userId: user._id });
+      return tokenPair;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async refresh(
+    payload: ITokenPayload,
+    entity: IToken,
+  ): Promise<ITokensPair> {
+    try {
+      const tokenPair = tokenService.generateTokenPair({
+        userId: payload.userId,
+        name: payload.name,
+      });
+
+      await Promise.all([
+        tokenRepository.create({ ...tokenPair, _userId: payload.userId }),
+        tokenRepository.deleteOne({ refreshToken: entity.refreshToken }),
+      ]);
       return tokenPair;
     } catch (e) {
       throw new ApiError(e.message, e.status);

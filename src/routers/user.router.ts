@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { userController } from "../controllers";
 import { userMiddleware } from "../middlewares";
+import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
 import { UserValidator } from "../validators";
 
@@ -11,14 +12,9 @@ export const userRouter = router;
 
 router.get("", userController.getAll);
 
-router.post(
-  "",
-  commonMiddleware.isBodyValid(UserValidator.create),
-  userController.create,
-);
-
 router.get(
   "/:userId",
+  authMiddleware.isAccessTokenValid,
   commonMiddleware.isValidId("userId"),
   userMiddleware.getByIdOrThrow,
   userController.getById,
@@ -26,12 +22,14 @@ router.get(
 
 router.delete(
   "/:userId",
+  authMiddleware.isAccessTokenValid,
   commonMiddleware.isValidId("userId"),
   userController.deleteById,
 );
 
 router.put(
   "/:userId",
+  authMiddleware.isAccessTokenValid,
   commonMiddleware.isValidId("userId"),
   commonMiddleware.isBodyValid(UserValidator.update),
   userController.updateById,
