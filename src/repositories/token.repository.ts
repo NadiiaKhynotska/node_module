@@ -1,4 +1,4 @@
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 
 import { Token } from "../models/Token.model";
 import { IToken } from "../types/token.type";
@@ -9,6 +9,10 @@ class TokenRepository {
   }
   public async deleteOne(params: FilterQuery<IToken>): Promise<void> {
     await Token.deleteOne(params);
+  }
+
+  public async deleteManyByUserId(userId: Types.ObjectId): Promise<void> {
+    await Token.deleteMany({ _userId: userId });
   }
 
   public async findOne(params: FilterQuery<IToken>): Promise<IToken> {

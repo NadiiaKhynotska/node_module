@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
 import { tokenRepository } from "../repositories/token.repository";
@@ -57,6 +59,22 @@ class AuthService {
         tokenRepository.deleteOne({ refreshToken: entity.refreshToken }),
       ]);
       return tokenPair;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async logout(accessToken: string): Promise<void> {
+    try {
+      tokenRepository.deleteOne({ accessToken });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async logoutAll(userId: Types.ObjectId): Promise<void> {
+    try {
+      await tokenRepository.deleteManyByUserId(userId);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

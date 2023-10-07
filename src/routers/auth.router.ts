@@ -24,4 +24,15 @@ router.post(
   authController.refresh,
 );
 
+router.post(
+  "/logout",
+  authMiddleware.isAccessTokenValid,
+  authController.logout,
+);
+
+router.post(
+  "/logout-all",
+  authMiddleware.isAccessTokenValid,
+  authController.logoutAll,
+);
 export const authRouter = router;

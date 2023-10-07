@@ -50,7 +50,7 @@ class AuthMiddleware {
       }
 
       req.res.locals.tokenPayload = payload;
-      req.res.locals.tokenEntity = entity;
+      req.res.locals.accessToken = accessToken;
       next();
     } catch (e) {
       next(e);
