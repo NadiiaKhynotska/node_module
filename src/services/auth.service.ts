@@ -1,18 +1,31 @@
 import { Types } from "mongoose";
 
+import { EEmailAction } from "../enums/EEmailAction";
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
 import { tokenRepository } from "../repositories/token.repository";
-import { IUserCredentials } from "../types";
+import { IUser, IUserCredentials } from "../types";
 import { IToken, ITokenPayload, ITokensPair } from "../types/token.type";
+import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
-  public async register(dto: IUserCredentials): Promise<void> {
+  public async register(dto: IUser): Promise<void> {
     try {
       const hashedPassword = await passwordService.hash(dto.password);
-      await userRepository.register({ ...dto, password: hashedPassword });
+      const user = await userRepository.register({
+        ...dto,
+        password: hashedPassword,
+      });
+      const actionToken = tokenService.generateActionToken({
+        userId: user._id,
+        name: user.name,
+      });
+      await emailService.sendMail(dto.email, EEmailAction.REGISTER, {
+        name: dto.name,
+        actionToken,
+      });
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

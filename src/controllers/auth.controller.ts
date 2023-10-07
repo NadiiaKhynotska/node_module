@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { EEmailAction } from "../enums/EEmailAction";
 import { authService } from "../services/auth.service";
-import { emailService } from "../services/email.service";
 import { IToken, ITokenPayload, ITokensPair } from "../types/token.type";
 
 class AuthController {
@@ -13,10 +11,6 @@ class AuthController {
   ): Promise<Response<void>> {
     try {
       await authService.register(req.body);
-      await emailService.sendMail(req.body.email, EEmailAction.REGISTER, {
-        name: req.body.name,
-      });
-
       return res.sendStatus(201);
     } catch (e) {
       next(e);
