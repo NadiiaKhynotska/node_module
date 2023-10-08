@@ -1,8 +1,11 @@
 import { Types } from "mongoose";
 
+import { EActionToken } from "../enums/EActionToken";
 import { EEmailAction } from "../enums/EEmailAction";
+import { EUsersStatus } from "../enums/EUsersStatus";
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
+import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { IUser, IUserCredentials } from "../types";
 import { IToken, ITokenPayload, ITokensPair } from "../types/token.type";
@@ -22,6 +25,12 @@ class AuthService {
         userId: user._id,
         name: user.name,
       });
+      actionTokenRepository.create({
+        token: actionToken,
+        type: EActionToken.activate,
+        _userId: user._id,
+      });
+
       await emailService.sendMail(dto.email, EEmailAction.REGISTER, {
         name: dto.name,
         actionToken,
@@ -88,6 +97,29 @@ class AuthService {
   public async logoutAll(userId: Types.ObjectId): Promise<void> {
     try {
       await tokenRepository.deleteManyByUserId(userId);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async activate(token: string): Promise<void> {
+    try {
+      tokenService.checkActionToken(token);
+      const entity = await actionTokenRepository.findOne({ token });
+
+      if (!entity) {
+        throw new ApiError("Not valid token", 400);
+      }
+
+      await actionTokenRepository.deleteManyByUserIdAndType(
+        entity._userId.toString(),
+        EActionToken.activate,
+      );
+
+      await userRepository.setStatus(
+        entity._userId.toString(),
+        EUsersStatus.active,
+      );
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

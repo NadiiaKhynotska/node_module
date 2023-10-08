@@ -30,6 +30,10 @@ class UserRepository {
     });
   }
 
+  public async setStatus(userId: string, status: any): Promise<void> {
+    await User.updateOne({ _id: userId }, { $set: { status } });
+  }
+
   public async deleteOne(userId: string): Promise<void> {
     await User.deleteOne({ _id: userId });
   }

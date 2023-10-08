@@ -19,8 +19,11 @@ export interface IToken extends Document {
   _userId: Types.ObjectId | IUser;
 }
 
-export interface IActionToken extends Document {
+export interface IActionTokenDocument extends Document {
   token: string;
   type: EActionToken;
   _userId: Types.ObjectId | IUser;
 }
+
+export interface IActionToken
+  extends Pick<IActionTokenDocument, "token" | "type" | "_userId"> {}

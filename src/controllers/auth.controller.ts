@@ -78,6 +78,22 @@ class AuthController {
       next(e);
     }
   }
+
+  public async activate(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<void>> {
+    try {
+      const { actionToken } = req.params;
+
+      await authService.activate(actionToken);
+
+      return res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const authController = new AuthController();

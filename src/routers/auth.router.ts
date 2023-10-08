@@ -35,4 +35,6 @@ router.post(
   authMiddleware.isAccessTokenValid,
   authController.logoutAll,
 );
+
+router.put("/activate", authController.activate);
 export const authRouter = router;
