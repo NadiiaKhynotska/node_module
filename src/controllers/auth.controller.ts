@@ -85,9 +85,23 @@ class AuthController {
     next: NextFunction,
   ): Promise<Response<void>> {
     try {
-      const { actionToken } = req.params;
-
+      const actionToken = req.query.actionToken as string;
       await authService.activate(actionToken);
+
+      return res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async sendActivationToken(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response<void>> {
+    try {
+      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
+      await authService.sendActivationToken(tokenPayload);
 
       return res.sendStatus(204);
     } catch (e) {

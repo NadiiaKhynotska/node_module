@@ -110,16 +110,44 @@ class AuthService {
       if (!entity) {
         throw new ApiError("Not valid token", 400);
       }
+      await Promise.all([
+        actionTokenRepository.deleteManyByUserIdAndType(
+          entity._userId.toString(),
+          EActionToken.activate,
+        ),
+        userRepository.setStatus(
+          entity._userId.toString(),
+          EUsersStatus.active,
+        ),
+      ]);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
 
-      await actionTokenRepository.deleteManyByUserIdAndType(
-        entity._userId.toString(),
-        EActionToken.activate,
+  public async sendActivationToken(tokenPayload: ITokenPayload): Promise<void> {
+    try {
+      const user = await userRepository.findById(
+        tokenPayload.userId.toString(),
       );
 
-      await userRepository.setStatus(
-        entity._userId.toString(),
-        EUsersStatus.active,
-      );
+      if (user.status !== EUsersStatus.inactive) {
+        throw new ApiError("User can not be activated", 403);
+      }
+      const actionToken = tokenService.generateActionToken({
+        userId: user._id,
+        name: user.name,
+      });
+      actionTokenRepository.create({
+        token: actionToken,
+        type: EActionToken.activate,
+        _userId: user._id,
+      });
+
+      await emailService.sendMail(user.email, EEmailAction.REGISTER, {
+        name: user.name,
+        actionToken,
+      });
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
