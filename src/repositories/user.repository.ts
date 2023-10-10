@@ -13,7 +13,7 @@ class UserRepository {
   }
 
   public async getOneByParams(params: FilterQuery<IUser>): Promise<IUser> {
-    return await User.findOne(params);
+    return await User.findOne(params).lean();
   }
 
   public async create(dto: IUser): Promise<IUser> {

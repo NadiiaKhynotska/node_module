@@ -5,7 +5,7 @@ import { IUser } from "./user.type";
 
 export interface ITokenPayload {
   userId: Types.ObjectId;
-  name: string;
+  name?: string;
 }
 
 export interface ITokensPair {

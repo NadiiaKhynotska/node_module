@@ -13,7 +13,7 @@ class UserMiddleware {
       const { userId } = req.params;
       const user = await userRepository.findById(userId);
       if (!user) {
-        throw new ApiError("user nor found", 404);
+        throw new ApiError("User nor found", 404);
       }
       req.res.locals = user;
 
@@ -34,6 +34,27 @@ class UserMiddleware {
     } catch (e) {
       next(e);
     }
+  }
+
+  public isUserExist<T>(field: keyof T) {
+    return async (
+      req: Request,
+      _res: Response,
+      next: NextFunction,
+    ): Promise<void> => {
+      try {
+        const user = await userRepository.getOneByParams({
+          [field]: req.body[field],
+        });
+        if (!user) {
+          throw new ApiError("User not found", 400);
+        }
+        req.res.locals = user;
+        next();
+      } catch (e) {
+        next(e);
+      }
+    };
   }
 }
 
