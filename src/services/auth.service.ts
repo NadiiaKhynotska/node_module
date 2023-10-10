@@ -211,6 +211,27 @@ class AuthService {
       throw new ApiError(e.message, e.status);
     }
   }
+
+  public async changePassword(
+    data: { newPassword: string; oldPassword: string },
+    userId: string,
+  ): Promise<void> {
+    try {
+      const user = await userRepository.findById(userId);
+      const isMatched = passwordService.compare(
+        data.oldPassword,
+        user.password,
+      );
+      if (!isMatched) {
+        throw new ApiError("invalid password", 400);
+      }
+
+      const hashedNewPassword = await passwordService.hash(data.newPassword);
+      await userRepository.update(user._id, { password: hashedNewPassword });
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
 }
 
 export const authService = new AuthService();
