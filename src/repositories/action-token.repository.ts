@@ -11,7 +11,11 @@ class ActionTokenRepository {
   public async deleteOne(params: FilterQuery<IActionToken>): Promise<void> {
     await actionToken.deleteOne(params);
   }
-
+  public async deleteManyByParams(
+    params: FilterQuery<IActionToken>,
+  ): Promise<void> {
+    await actionToken.deleteMany(params);
+  }
   public async deleteManyByUserIdAndType(
     userId: string,
     type: EActionToken,
