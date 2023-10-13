@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 import { EActionToken } from "../enums/EActionToken";
 import { EEmailAction } from "../enums/EEmailAction";
@@ -45,7 +45,9 @@ class AuthService {
 
   public async login(dto: IUserCredentials): Promise<ITokensPair> {
     try {
-      const user = await userRepository.getOneByParams({ email: dto.email });
+      const user = await userRepository.getOneByParams({ email: dto.email }, [
+        "password",
+      ]);
       if (!user) {
         throw new ApiError("Invalid credentials provided", 401);
       }
@@ -80,7 +82,10 @@ class AuthService {
       });
 
       await Promise.all([
-        tokenRepository.create({ ...tokenPair, _userId: payload.userId }),
+        tokenRepository.create({
+          ...tokenPair,
+          _userId: new ObjectId(payload.userId),
+        }),
         tokenRepository.deleteOne({ refreshToken: entity.refreshToken }),
       ]);
       return tokenPair;
@@ -97,7 +102,7 @@ class AuthService {
     }
   }
 
-  public async logoutAll(userId: Types.ObjectId): Promise<void> {
+  public async logoutAll(userId: string): Promise<void> {
     try {
       await tokenRepository.deleteManyByUserId(userId);
     } catch (e) {
@@ -228,6 +233,8 @@ class AuthService {
 
       const hashedNewPassword = await passwordService.hash(data.newPassword);
       await userRepository.update(user._id, { password: hashedNewPassword });
+      // await tokenRepository.deleteManyByUserId(user._id);
+      await this.logoutAll(user._id);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

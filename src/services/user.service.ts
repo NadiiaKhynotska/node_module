@@ -1,3 +1,4 @@
+import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
 import { IUser } from "../types";
 
@@ -6,12 +7,26 @@ class UserService {
     return await userRepository.getAll();
   }
 
-  public async update(userId: string, dto: Partial<IUser>): Promise<IUser> {
-    return await userRepository.update(userId, dto);
+  public async update(
+    manageUserId: string,
+    dto: Partial<IUser>,
+    userId: string,
+  ): Promise<IUser> {
+    this.checkAbilityToManage(userId, manageUserId);
+    return await userRepository.update(manageUserId, dto);
   }
 
   public async deleteOne(userId: string): Promise<void> {
     await userRepository.deleteOne(userId);
+  }
+
+  public async getMe(userId: string): Promise<IUser> {
+    return await userRepository.findById(userId);
+  }
+  private checkAbilityToManage(userId: string, manageUserId: string): void {
+    if (userId !== manageUserId) {
+      throw new ApiError("You can not manage this user", 403);
+    }
   }
 }
 

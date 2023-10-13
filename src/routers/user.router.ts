@@ -12,6 +12,8 @@ export const userRouter = router;
 
 router.get("", userController.getAll);
 
+router.get("/me", authMiddleware.isAccessTokenValid, userController.getMe);
+
 router.get(
   "/:userId",
   authMiddleware.isAccessTokenValid,
