@@ -2,16 +2,17 @@ import { NextFunction, Request, Response } from "express";
 
 import { userService } from "../services";
 import { IUser } from "../types";
+import { IQuery } from "../types/query.type";
 import { ITokenPayload } from "../types/token.type";
 
 class UserController {
   public async getAll(
-    _req: Request,
+    req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<Response<IUser[]>> {
     try {
-      const users = await userService.getAll();
+      const users = await userService.getAllWithPagination(req.query as IQuery);
       return res.json(users);
     } catch (e) {
       next(e);

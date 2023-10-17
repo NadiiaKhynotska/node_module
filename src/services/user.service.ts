@@ -1,10 +1,23 @@
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
 import { IUser } from "../types";
+import { IQuery } from "../types/query.type";
 
 class UserService {
   public async getAll(): Promise<IUser[]> {
     return await userRepository.getAll();
+  }
+
+  public async getAllWithPagination(query: IQuery) {
+    try {
+      const queryString = JSON.stringify(query);
+      const queryObj = JSON.parse(
+        queryString.replace(/\b(gte|lte|gt|lt)\b/, (match) => `$${match}`),
+      );
+      return await userRepository.getAllWithPagination(queryObj);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   public async update(

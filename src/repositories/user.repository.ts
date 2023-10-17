@@ -2,10 +2,37 @@ import { FilterQuery } from "mongoose";
 
 import { User } from "../models";
 import { IUser, IUserCredentials } from "../types";
+import { IPaginationResponse } from "../types/pagination.types";
+import { IQuery } from "../types/query.type";
 
 class UserRepository {
   public async getAll(): Promise<IUser[]> {
     return await User.find();
+  }
+
+  public async getAllWithPagination(
+    queryObj: IQuery,
+  ): Promise<IPaginationResponse<IUser>> {
+    const {
+      page = 1,
+      sortedBy = "createdAt",
+      limit = 5,
+      ...searchObj
+    } = queryObj;
+
+    const skip = Number(limit) * (Number(page) - 1);
+
+    const [users, itemsFound] = await Promise.all([
+      User.find(searchObj).limit(Number(limit)).skip(skip).sort(sortedBy),
+      User.count(searchObj),
+    ]);
+
+    return {
+      page: Number(page),
+      limit: Number(limit),
+      itemsFound: itemsFound,
+      data: users,
+    };
   }
 
   public async findById(id: string): Promise<IUser> {
