@@ -19,4 +19,4 @@ const tokenRemover = async function () {
   }
 };
 
-export const removeOldTokens = new CronJob(" 0 0 * * *", tokenRemover);
+export const removeOldTokens = new CronJob("0 0 * * *", tokenRemover);

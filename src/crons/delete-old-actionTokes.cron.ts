@@ -9,7 +9,7 @@ dayjs.extend(utc);
 
 const actionTokenRemover = async function () {
   try {
-    const prevMonth = dayjs().utc().subtract(3, "d");
+    const prevMonth = dayjs().utc().subtract(30, "d");
 
     await actionTokenRepository.deleteManyByParams({
       createdAt: { $lte: prevMonth },
@@ -20,6 +20,6 @@ const actionTokenRemover = async function () {
 };
 
 export const removeOldActionTokens = new CronJob(
-  "0 0  * * * *",
+  "0 0 * * *",
   actionTokenRemover,
 );
