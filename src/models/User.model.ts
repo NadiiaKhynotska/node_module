@@ -36,6 +36,9 @@ const userSchema = new Schema(
       select: false,
       required: true,
     },
+    avatar: {
+      type: String,
+    },
   },
   {
     timestamps: true,
