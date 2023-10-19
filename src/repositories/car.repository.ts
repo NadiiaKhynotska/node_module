@@ -16,14 +16,14 @@ class CarRepository {
     return await Car.findOne(params);
   }
 
-  public async create(dto: ICar): Promise<ICar> {
-    return await Car.create(dto);
+  public async create(dto: ICar, userId: string): Promise<ICar> {
+    return await Car.create({ ...dto, _userId: userId });
   }
 
   public async update(carId: string, dto: Partial<ICar>): Promise<ICar> {
     return await Car.findByIdAndUpdate(carId, dto, {
       returnDocument: "after",
-    });
+    }).populate("_userId");
   }
 
   public async deleteOne(carId: string): Promise<void> {

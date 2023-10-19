@@ -4,10 +4,6 @@ import { IUser } from "../types";
 import { IQuery } from "../types/query.type";
 
 class UserService {
-  public async getAll(): Promise<IUser[]> {
-    return await userRepository.getAll();
-  }
-
   public async getAllWithPagination(query: IQuery) {
     try {
       const queryString = JSON.stringify(query);
