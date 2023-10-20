@@ -4,6 +4,7 @@ import { userController } from "../controllers";
 import { userMiddleware } from "../middlewares";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
+import { filesMiddleware } from "../middlewares/files.middleware";
 import { UserValidator } from "../validators";
 
 const router = Router();
@@ -35,4 +36,12 @@ router.put(
   commonMiddleware.isValidId("userId"),
   commonMiddleware.isBodyValid(UserValidator.update),
   userController.updateById,
+);
+
+router.post(
+  "/:userId/avatar",
+  authMiddleware.isAccessTokenValid,
+  commonMiddleware.isValidId("userId"),
+  filesMiddleware.isAvatarValid,
+  userController.uploadAvatar,
 );
