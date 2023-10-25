@@ -1,7 +1,11 @@
+import { UploadedFile } from "express-fileupload";
+
+import { EFileTypes } from "../enums/EFileTypes";
 import { ApiError } from "../errors";
 import { userRepository } from "../repositories";
 import { IUser } from "../types";
 import { IQuery } from "../types/query.type";
+import { s3Service } from "./s3.service";
 
 class UserService {
   public async getAllWithPagination(query: IQuery) {
@@ -31,6 +35,28 @@ class UserService {
 
   public async getMe(userId: string): Promise<IUser> {
     return await userRepository.findById(userId);
+  }
+
+  public async uploadAvatar(
+    avatar: UploadedFile,
+    userId: string,
+  ): Promise<IUser> {
+    const user = await userRepository.findById(userId);
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
+
+    const filePath = await s3Service.uploadFile(
+      avatar,
+      EFileTypes.User,
+      userId,
+    );
+
+    const updatedUser = await userRepository.update(userId, {
+      avatar: filePath,
+    });
+
+    return updatedUser;
   }
   private checkAbilityToManage(userId: string, manageUserId: string): void {
     if (userId !== manageUserId) {
